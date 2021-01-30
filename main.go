@@ -6,8 +6,8 @@ import (
 	"github.com/avtara/testcov-backend/middleware"
 	"github.com/avtara/testcov-backend/repository"
 	"github.com/avtara/testcov-backend/service"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	cors "github.com/itsjamie/gin-cors"
 	"gorm.io/gorm"
 )
 
@@ -27,8 +27,8 @@ var (
 
 func main() {
 	defer config.CloseDatabaseConnection(db)
+
 	r := gin.Default()
-	config := cors.DefaultConfig()
 	r.Use(cors.Default())
 	// r.Use(cors.Middleware(cors.Config{
 	// 	Origins:         "*",
