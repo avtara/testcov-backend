@@ -30,7 +30,6 @@ var (
 func main() {
 	defer config.CloseDatabaseConnection(db)
 	r := gin.Default()
-	config := cors.DefaultConfig()
 	r.Use(cors.Middleware(cors.Config{
 		Origins:         "*",
 		Methods:         "GET, PUT, POST, DELETE, OPTIONS",
