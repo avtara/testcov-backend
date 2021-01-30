@@ -9,6 +9,7 @@ import (
 type HospitalService interface {
 	All() []entity.Hospital
 	DetailSchedule(hospitalID string) []entity.Schedule
+	DetailHospital(hospitalID string) entity.Hospital
 }
 
 type hospitalService struct {
@@ -28,4 +29,8 @@ func (service *hospitalService) All() []entity.Hospital {
 
 func (service *hospitalService) DetailSchedule(hospitalID string) []entity.Schedule {
 	return service.hospitalRepository.DetailSchedule(hospitalID)
+}
+
+func (service *hospitalService) DetailHospital(hospitalID string) entity.Hospital {
+	return service.hospitalRepository.DetailHospital(hospitalID)
 }

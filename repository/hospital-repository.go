@@ -9,6 +9,7 @@ import (
 type HospitalRepository interface {
 	AllHospital() []entity.Hospital
 	DetailSchedule(hospitalID string) []entity.Schedule
+	DetailHospital(hospitalID string) entity.Hospital
 }
 
 type hospitalConnection struct {
@@ -32,4 +33,10 @@ func (db *hospitalConnection) DetailSchedule(hospitalID string) []entity.Schedul
 	var schedule []entity.Schedule
 	db.connection.Table("schedules").Select("schedules.id, schedules.day, schedules.time_start, schedules.time_end, schedules.hospital_id").Joins("left join hospitals on schedules.id = hospitals.id").Where("schedules.hospital_id = ?", hospitalID).Scan(&schedule)
 	return schedule
+}
+
+func (db *hospitalConnection) DetailHospital(hospitalID string) entity.Hospital {
+	var hospitals entity.Hospital
+	db.connection.Find(&hospitals, hospitalID)
+	return hospitals
 }

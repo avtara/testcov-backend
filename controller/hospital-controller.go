@@ -70,8 +70,10 @@ func (c *hospitalController) NearestHospital(ctx *gin.Context) {
 }
 
 func (c *hospitalController) DetailHospital(ctx *gin.Context) {
-	hospital := c.hospitalService.DetailSchedule(ctx.Param("id"))
-	res := helper.BuildResponse(true, "OK", hospital)
+	id := ctx.Param("id")
+	var hospitals entity.Hospital = c.hospitalService.DetailHospital(id)
+	hospitals.Schedules = c.hospitalService.DetailSchedule(id)
+	res := helper.BuildResponse(true, "OK", hospitals)
 	ctx.JSON(http.StatusOK, res)
 }
 
