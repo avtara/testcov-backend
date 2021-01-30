@@ -77,6 +77,11 @@ func (c *authController) Register(ctx *gin.Context) {
 
 func (c *authController) ValidateToken(ctx *gin.Context) {
 	authHeader := ctx.GetHeader("Authorization")
+	if authHeader == "" {
+		response := helper.BuildErrorResponse("Failed to process request", "No token found", nil)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
+		return
+	}
 	splitToken := strings.Split(authHeader, "Bearer ")
 	token, err := c.jwtService.ValidateToken(splitToken[1])
 	if !token.Valid {
