@@ -1,13 +1,16 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/avtara/testcov-backend/dto"
 	"github.com/avtara/testcov-backend/entity"
 	"github.com/avtara/testcov-backend/helper"
 	"github.com/avtara/testcov-backend/service"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,6 +18,7 @@ import (
 type AuthController interface {
 	Login(ctx *gin.Context)
 	Register(ctx *gin.Context)
+	ValidateToken(ctx *gin.Context)
 }
 
 type authController struct {
@@ -69,4 +73,29 @@ func (c *authController) Register(ctx *gin.Context) {
 		response := helper.BuildResponse(true, "OK!", createdUser)
 		ctx.JSON(http.StatusCreated, response)
 	}
+}
+
+func (c *authController) ValidateToken(ctx *gin.Context) {
+	authHeader := ctx.GetHeader("Authorization")
+	splitToken := strings.Split(authHeader, "Bearer ")
+	userID := c.getUserIDByToken(splitToken[1])
+	convertedUserID, err := strconv.ParseUint(userID, 10, 64)
+	if err == nil {
+		authResult := c.authService.FindByID(convertedUserID)
+		authResult.Token = authHeader
+		response := helper.BuildResponse(true, "OK!", authResult)
+		ctx.JSON(http.StatusOK, response)
+		return
+	}
+}
+
+func (c *authController) getUserIDByToken(token string) string {
+	fmt.Println(token)
+	aToken, err := c.jwtService.ValidateToken(token)
+	if err != nil {
+		panic(err.Error())
+	}
+	claims := aToken.Claims.(jwt.MapClaims)
+	id := fmt.Sprintf("%v", claims["user_id"])
+	return id
 }

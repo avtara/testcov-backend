@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/avtara/testcov-backend/config"
 	"github.com/avtara/testcov-backend/controller"
+	"github.com/avtara/testcov-backend/middleware"
 	"github.com/avtara/testcov-backend/repository"
 	"github.com/avtara/testcov-backend/service"
 	"github.com/gin-gonic/gin"
@@ -25,6 +26,7 @@ func main() {
 	{
 		authRoutes.POST("/register", authController.Register)
 		authRoutes.POST("/login", authController.Login)
+		authRoutes.GET("/validate", authController.ValidateToken, middleware.AuthorizeJWT(jwtService))
 	}
 
 	r.Run()

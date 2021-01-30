@@ -3,6 +3,7 @@ package middleware
 import (
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/avtara/testcov-backend/helper"
 	"github.com/avtara/testcov-backend/service"
@@ -14,12 +15,13 @@ import (
 func AuthorizeJWT(jwtService service.JWTService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
-		if authHeader == "" {
+		splitToken := strings.Split(authHeader, "Bearer ")
+		if splitToken[1] == "" {
 			response := helper.BuildErrorResponse("Failed to process request", "No token found", nil)
 			c.AbortWithStatusJSON(http.StatusBadRequest, response)
 			return
 		}
-		token, err := jwtService.ValidateToken(authHeader)
+		token, err := jwtService.ValidateToken(splitToken[1])
 		if token.Valid {
 			claims := token.Claims.(jwt.MapClaims)
 			log.Println("Claim[user_id]: ", claims["user_id"])

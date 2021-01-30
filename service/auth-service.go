@@ -15,6 +15,7 @@ type AuthService interface {
 	VerifyCredential(email string, password string) interface{}
 	CreateUser(user dto.RegisterDTO) entity.User
 	FindByEmail(email string) entity.User
+	FindByID(ID uint64) entity.User
 	IsDuplicateEmail(email string) bool
 }
 
@@ -53,6 +54,10 @@ func (service *authService) CreateUser(user dto.RegisterDTO) entity.User {
 
 func (service *authService) FindByEmail(email string) entity.User {
 	return service.userRepository.FindByEmail(email)
+}
+
+func (service *authService) FindByID(ID uint64) entity.User {
+	return service.userRepository.FindByID(ID)
 }
 
 func (service *authService) IsDuplicateEmail(email string) bool {

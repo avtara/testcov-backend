@@ -29,14 +29,14 @@ func SetupDatabaseConnection() *gorm.DB {
 		panic("Failed to create a connection to database")
 	}
 
-	db.AutoMigrate(&entity.User{})
+	db.AutoMigrate(&entity.User{}, &entity.Hospital{}, &entity.Schedule{})
 	return db
 }
 
 //CloseDatabaseConnection is closing connection between app and db
 func CloseDatabaseConnection(db *gorm.DB) {
 	dbSQL, err := db.DB()
-	if err != nil {
+	if err == nil {
 		panic("Failed to close connection from database")
 	}
 	dbSQL.Close()
