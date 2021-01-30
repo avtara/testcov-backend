@@ -82,7 +82,7 @@ func (c *authController) ValidateToken(ctx *gin.Context) {
 	convertedUserID, err := strconv.ParseUint(userID, 10, 64)
 	if err == nil {
 		authResult := c.authService.FindByID(convertedUserID)
-		authResult.Token = authHeader
+		authResult.Token = splitToken[1]
 		response := helper.BuildResponse(true, "OK!", authResult)
 		ctx.JSON(http.StatusOK, response)
 		return
