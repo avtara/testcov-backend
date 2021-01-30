@@ -15,13 +15,13 @@ type hospitalConnection struct {
 }
 
 //NewHospitalRepository is creates a new instance of UserRepository
-func NewHospitalRepository(db *gorm.DB) UserRepository {
-	return &userConnection{
+func NewHospitalRepository(db *gorm.DB) HospitalRepository {
+	return &hospitalConnection{
 		connection: db,
 	}
 }
 
-func (db *hospitalConnection) AllBook() []entity.Hospital {
+func (db *hospitalConnection) AllHospital() []entity.Hospital {
 	var hospitals []entity.Hospital
 	db.connection.Find(&hospitals)
 	return hospitals

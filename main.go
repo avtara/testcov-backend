@@ -20,8 +20,8 @@ var (
 	jwtService         service.JWTService            = service.NewJWTService()
 	authService        service.AuthService           = service.NewAuthService(userRepository)
 	authController     controller.AuthController     = controller.NewAuthController(authService, jwtService)
-	hospitalService    service.HospitalService       = service.NewHospitalService(userRepository)
-	hospitalController controller.HospitalController = controller.NewHospitalController(authService, jwtService)
+	hospitalService    service.HospitalService       = service.NewHospitalService(hospitalRepository)
+	hospitalController controller.HospitalController = controller.NewHospitalController(hospitalService)
 )
 
 func main() {
@@ -45,9 +45,10 @@ func main() {
 		authRoutes.GET("/validate", authController.ValidateToken, middleware.AuthorizeJWT(jwtService))
 	}
 
-	authRoutes := r.Group("api/auth")
+	hospitalRoutes := r.Group("api/hospital")
 	{
-		authRoutes.GET("/", hospitalController.All)
+		hospitalRoutes.GET("/", hospitalController.All)
+		hospitalRoutes.GET("/nearest", hospitalController.NearestHospital)
 	}
 
 	r.Run()

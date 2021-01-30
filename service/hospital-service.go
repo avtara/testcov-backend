@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/avtara/golang_api/entity"
+	"github.com/avtara/testcov-backend/entity"
 	"github.com/avtara/testcov-backend/repository"
 )
 
