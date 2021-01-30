@@ -78,15 +78,22 @@ func (c *authController) Register(ctx *gin.Context) {
 func (c *authController) ValidateToken(ctx *gin.Context) {
 	authHeader := ctx.GetHeader("Authorization")
 	splitToken := strings.Split(authHeader, "Bearer ")
-	userID := c.getUserIDByToken(splitToken[1])
-	convertedUserID, err := strconv.ParseUint(userID, 10, 64)
-	if err == nil {
-		authResult := c.authService.FindByID(convertedUserID)
-		authResult.Token = splitToken[1]
-		response := helper.BuildResponse(true, "OK!", authResult)
-		ctx.JSON(http.StatusOK, response)
-		return
+	token, err := c.jwtService.ValidateToken(splitToken[1])
+	if !token.Valid {
+		response := helper.BuildErrorResponse("Token is not valid", err.Error(), nil)
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, response)
+	} else {
+		userID := c.getUserIDByToken(splitToken[1])
+		convertedUserID, err := strconv.ParseUint(userID, 10, 64)
+		if err == nil {
+			authResult := c.authService.FindByID(convertedUserID)
+			authResult.Token = splitToken[1]
+			response := helper.BuildResponse(true, "OK!", authResult)
+			ctx.JSON(http.StatusOK, response)
+			return
+		}
 	}
+
 }
 
 func (c *authController) getUserIDByToken(token string) string {
