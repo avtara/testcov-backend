@@ -98,7 +98,6 @@ func (c *authController) ValidateToken(ctx *gin.Context) {
 			return
 		}
 	}
-
 }
 
 func (c *authController) getUserIDByToken(token string) string {

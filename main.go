@@ -17,11 +17,14 @@ var (
 	db                 *gorm.DB                      = config.SetupDatabaseConnection()
 	userRepository     repository.UserRepository     = repository.NewUserRepository(db)
 	hospitalRepository repository.HospitalRepository = repository.NewHospitalRepository(db)
+	orderRepository    repository.OrderRepository    = repository.NewOrderRepository(db)
 	jwtService         service.JWTService            = service.NewJWTService()
 	authService        service.AuthService           = service.NewAuthService(userRepository)
 	authController     controller.AuthController     = controller.NewAuthController(authService, jwtService)
 	hospitalService    service.HospitalService       = service.NewHospitalService(hospitalRepository)
 	hospitalController controller.HospitalController = controller.NewHospitalController(hospitalService)
+	orderService       service.OrderService          = service.NewOrderService(orderRepository)
+	orderController    controller.OrderController    = controller.NewOrderController(orderService, jwtService, hospitalService)
 )
 
 func main() {
@@ -50,6 +53,12 @@ func main() {
 		hospitalRoutes.GET("/", hospitalController.All)
 		hospitalRoutes.GET("/nearest", hospitalController.NearestHospital)
 		hospitalRoutes.GET("/detail/:id", hospitalController.DetailHospital)
+	}
+
+	orderRoutes := r.Group("api/order")
+	{
+		orderRoutes.POST("/add", orderController.CreateOrder)
+		orderRoutes.GET("/", orderController.HistoryOrder)
 	}
 
 	r.Run()

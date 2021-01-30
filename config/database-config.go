@@ -29,7 +29,7 @@ func SetupDatabaseConnection() *gorm.DB {
 		panic("Failed to create a connection to database")
 	}
 
-	db.AutoMigrate(&entity.User{}, &entity.Hospital{}, &entity.Schedule{})
+	db.AutoMigrate(&entity.User{}, &entity.Hospital{}, &entity.Schedule{}, &entity.Order{})
 	return db
 }
 
