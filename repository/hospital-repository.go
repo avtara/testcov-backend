@@ -8,6 +8,7 @@ import (
 //HospitalRepository is contract what userRepository can do to db
 type HospitalRepository interface {
 	AllHospital() []entity.Hospital
+	DetailSchedule(hospitalID string) []entity.Schedule
 }
 
 type hospitalConnection struct {
@@ -25,4 +26,10 @@ func (db *hospitalConnection) AllHospital() []entity.Hospital {
 	var hospitals []entity.Hospital
 	db.connection.Find(&hospitals)
 	return hospitals
+}
+
+func (db *hospitalConnection) DetailSchedule(hospitalID string) []entity.Schedule {
+	var schedule []entity.Schedule
+	db.connection.Table("schedules").Select("schedules.id, schedules.day, schedules.time_start, schedules.time_end, schedules.hospital_id").Joins("left join hospitals on schedules.id = hospitals.id").Where("schedules.hospital_id = ?", hospitalID).Scan(&schedule)
+	return schedule
 }

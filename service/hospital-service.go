@@ -8,6 +8,7 @@ import (
 //HospitalService is a contract about something that service can do
 type HospitalService interface {
 	All() []entity.Hospital
+	DetailSchedule(hospitalID string) []entity.Schedule
 }
 
 type hospitalService struct {
@@ -23,4 +24,8 @@ func NewHospitalService(hospitalRepository repository.HospitalRepository) Hospit
 
 func (service *hospitalService) All() []entity.Hospital {
 	return service.hospitalRepository.AllHospital()
+}
+
+func (service *hospitalService) DetailSchedule(hospitalID string) []entity.Schedule {
+	return service.hospitalRepository.DetailSchedule(hospitalID)
 }

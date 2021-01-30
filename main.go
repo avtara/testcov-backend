@@ -49,6 +49,7 @@ func main() {
 	{
 		hospitalRoutes.GET("/", hospitalController.All)
 		hospitalRoutes.GET("/nearest", hospitalController.NearestHospital)
+		hospitalRoutes.GET("/detail/:id", hospitalController.DetailHospital)
 	}
 
 	r.Run()

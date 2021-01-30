@@ -16,6 +16,7 @@ import (
 type HospitalController interface {
 	All(ctx *gin.Context)
 	NearestHospital(ctx *gin.Context)
+	DetailHospital(ctx *gin.Context)
 }
 
 type hospitalController struct {
@@ -31,6 +32,9 @@ func NewHospitalController(hospitalService service.HospitalService) HospitalCont
 
 func (c *hospitalController) All(ctx *gin.Context) {
 	var hospitals []entity.Hospital = c.hospitalService.All()
+	for i := 0; i < len(hospitals); i++ {
+		hospitals[i].Schedules = c.hospitalService.DetailSchedule(strconv.Itoa(i + 1))
+	}
 	res := helper.BuildResponse(true, "OK", hospitals)
 	ctx.JSON(http.StatusOK, res)
 }
@@ -49,7 +53,7 @@ func (c *hospitalController) NearestHospital(ctx *gin.Context) {
 		fromLat, _ := strconv.ParseFloat(latitude, 64)
 		toLong, _ := strconv.ParseFloat(hospitals[i].Longitude, 64)
 		toLat, _ := strconv.ParseFloat(hospitals[i].Latitude, 64)
-		hospitals[i].Distance = c.distance(fromLong, fromLat, toLong, toLat)
+		hospitals[i].Distance = c.Distance(fromLong, fromLat, toLong, toLat)
 	}
 	for i := 0; i < len(hospitals); i++ {
 		if hospitals[i].Distance >= 1.5 {
@@ -65,7 +69,13 @@ func (c *hospitalController) NearestHospital(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
-func (c *hospitalController) distance(lat1 float64, lng1 float64, lat2 float64, lng2 float64) float64 {
+func (c *hospitalController) DetailHospital(ctx *gin.Context) {
+	hospital := c.hospitalService.DetailSchedule(ctx.Param("id"))
+	res := helper.BuildResponse(true, "OK", hospital)
+	ctx.JSON(http.StatusOK, res)
+}
+
+func (c *hospitalController) Distance(lat1 float64, lng1 float64, lat2 float64, lng2 float64) float64 {
 	radlat1 := float64(math.Pi * lat1 / 180)
 	radlat2 := float64(math.Pi * lat2 / 180)
 
