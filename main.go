@@ -1,13 +1,15 @@
 package main
 
 import (
+	"time"
+
 	"github.com/avtara/testcov-backend/config"
 	"github.com/avtara/testcov-backend/controller"
 	"github.com/avtara/testcov-backend/middleware"
 	"github.com/avtara/testcov-backend/repository"
 	"github.com/avtara/testcov-backend/service"
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	cors "github.com/itsjamie/gin-cors"
 	"gorm.io/gorm"
 )
 
@@ -27,18 +29,17 @@ var (
 
 func main() {
 	defer config.CloseDatabaseConnection(db)
-
 	r := gin.Default()
-	r.Use(cors.Default())
-	// r.Use(cors.Middleware(cors.Config{
-	// 	Origins:         "*",
-	// 	Methods:         "GET, PUT, POST, DELETE",
-	// 	RequestHeaders:  "Origin, Authorization, Content-Type",
-	// 	ExposedHeaders:  "",
-	// 	MaxAge:          50 * time.Second,
-	// 	Credentials:     true,
-	// 	ValidateHeaders: false,
-	// }))
+	config := cors.DefaultConfig()
+	r.Use(cors.Middleware(cors.Config{
+		Origins:         "*",
+		Methods:         "GET, PUT, POST, DELETE, OPTIONS",
+		RequestHeaders:  "Origin, Authorization, Content-Type",
+		ExposedHeaders:  "",
+		MaxAge:          50 * time.Second,
+		Credentials:     true,
+		ValidateHeaders: false,
+	}))
 
 	authRoutes := r.Group("api/auth")
 	{
