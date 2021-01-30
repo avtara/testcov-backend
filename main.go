@@ -58,7 +58,7 @@ func main() {
 	orderRoutes := r.Group("api/order")
 	{
 		orderRoutes.POST("/add", orderController.CreateOrder)
-		orderRoutes.GET("/", orderController.HistoryOrder)
+		orderRoutes.GET("/", orderController.HistoryOrder, middleware.AuthorizeJWT(jwtService))
 	}
 
 	r.Run()
